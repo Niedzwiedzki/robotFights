@@ -9,10 +9,12 @@ Arobot::Arobot()
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	AzimutGimbal = CreateDefaultSubobject<USceneComponent>("AzimutGimbal");
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	RootComponent = Mesh;
-	SpringArm->SetupAttachment(Mesh);
+	AzimutGimbal->SetupAttachment(Mesh);
+	SpringArm->SetupAttachment(AzimutGimbal);
 	Camera->SetupAttachment(SpringArm);
 
 }
@@ -56,12 +58,12 @@ void Arobot::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAction("Accelerate", IE_Released, this, &Arobot::Inertion);
 	InputComponent->BindAction("Suppress", IE_Pressed, this, &Arobot::Stop);
 	InputComponent->BindAction("Suppress", IE_Released, this, &Arobot::Inertion);
-
 	InputComponent->BindAction("Left", IE_Pressed, this, &Arobot::left);
 	InputComponent->BindAction("Left", IE_Released, this, &Arobot::stopRotation);
 	InputComponent->BindAction("Right", IE_Pressed, this, &Arobot::right);
 	InputComponent->BindAction("Right", IE_Released, this, &Arobot::stopRotation);
-
+	PlayerInputComponent->BindAxis("Turn", this, &Arobot::rotateX);
+	PlayerInputComponent->BindAxis("LookUp", this, &Arobot::rotateY);
 
 
 }
@@ -173,6 +175,25 @@ void Arobot::rotation(float Value)
 }
 
 
+void Arobot::rotateX(float Value)
+{
+	FRotator NewRotation = FRotator(0.0f, Value, 0.0f);
+
+	FQuat QuatRotation = FQuat(NewRotation);
+
+	AzimutGimbal->AddLocalRotation(QuatRotation, false, 0, ETeleportType::None);
+
+}
+
+void Arobot::rotateY(float Value)
+{
+	FRotator NewRotation = FRotator(-Value, 0.0f, 0.0f);
+
+	FQuat QuatRotation = FQuat(NewRotation);
+
+	SpringArm->AddLocalRotation(QuatRotation, false, 0, ETeleportType::None);
+
+}
 
 
 

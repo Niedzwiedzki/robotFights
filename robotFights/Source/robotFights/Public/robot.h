@@ -40,6 +40,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USceneComponent* AzimutGimbal;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float speed;
 
@@ -86,6 +89,8 @@ public:
 	void stopRotation();
 	void rotation(float Value);
 
+	void rotateX(float Value);
+	void rotateY(float Value);
 
 
 
